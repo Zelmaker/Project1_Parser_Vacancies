@@ -19,6 +19,7 @@ class Vacancy:
 # sj 40
 def getting_vacancies_hh(vacancy_name, amount):
     counter = 0
+    print("СОБИРАЕМ c HH")
     for p in range(int(amount) // 10):
         print(f"Страница: - {p}")
         par = {'per_page': '10', 'page': p, 'text': vacancy_name, 'User-Agent': 'User-Agent: MyApp/1.0',
@@ -33,7 +34,7 @@ def getting_vacancies_hh(vacancy_name, amount):
             vacancy_name = i["name"]
             vacancy_url = i["alternate_url"]
             if i.get("salary") is not None:
-                vacancy_salary = f'{i["salary"]["from"]} - {i["salary"]["to"]}'
+                vacancy_salary = i["salary"]["from"]
             else:
                 vacancy_salary = 0
             vacancy_description = f'{i["snippet"]["requirement"]} \n{i["snippet"]["responsibility"]}'.replace("<highlighttext>","").replace("</highlighttext>","")
@@ -45,6 +46,7 @@ def getting_vacancies_hh(vacancy_name, amount):
 def getting_vacancies_sj(vacancy_name, amount):
     url = 'https://russia.superjob.ru/vacancy/search/'
     count = 0
+    print("СОБИРАЕМ c SuperJob")
     for i in range(amount//40):
         print(f"Собираем с {i} страницы:")
         params = {'page': i, 'keywords': vacancy_name}
@@ -63,5 +65,23 @@ def getting_vacancies_sj(vacancy_name, amount):
                 f.write(vacancy_sj)
 
 #
-# getting_vacancies_hh("python", 100)
-getting_vacancies_sj("python", 40)
+#
+
+
+def main():
+    # print("Привет! Давай соберем вакансии по ключевому слову с HH.ru и c superjob.ru\nВведите ключ(например: python)")
+    # user_keyword_input = input()
+    # print("Сколько вакансий собираем с hh? ")
+    # vacancies_from_hh = int(input())
+    # print("Сколько вакансий собираем с SJ?")
+    # vacancies_from_sj = int(input())
+    # print("Пошла жара")
+    # getting_vacancies_hh(user_keyword_input, vacancies_from_hh)
+    # getting_vacancies_sj(user_keyword_input, vacancies_from_sj)
+    with open(r"vacancies.txt", "r", encoding="utf-8") as file:
+        print(len(file.readlines()))
+
+
+if __name__ == '__main__':
+    main()
+
