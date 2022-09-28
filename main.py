@@ -3,19 +3,6 @@ import json
 import requests
 
 
-def make_url(vacancy_name):
-    hh_url = "https://hh.ru/search/vacancy?text=" + vacancy_name + "&from=suggest_post & area = 1&hhtmFrom = vacancy_search_list&page="
-    superjob_url = "https://russia.superjob.ru/vacancy/search/?keywords=" + vacancy_name + "& page ="
-    return hh_url, superjob_url
-
-
-# print("Привет! Давай соберем вакансии по ключевому слову с HH.ru и c superjob.ru\nВведите ключ(например: python)")
-# user_keyword_input = input()
-# hh_url, superjob_url = make_url(user_keyword_input)
-# print("Сколько вакансий собираем с hh? ")
-# vacancies_from_hh = int(input())
-# print("Сколько вакансий собираем с SJ? не меньше 40")
-# vacancies_from_sj = int(input())
 class Vacancy:
     def __init__(self, name, url, description, salary=None):
         self.name = name
@@ -55,9 +42,26 @@ def getting_vacancies_hh(vacancy_name, amount):
                 f.write(vacancy_one)
             print(f"Спарсено вакансий: {counter}")
 
-            # if len(vacancy_name) == 0:
-            #     print("Больше вакансий на хх нет")
-            #     break
+def getting_vacancies_sj(vacancy_name, amount):
+    url = 'https://russia.superjob.ru/vacancy/search/'
+    count = 0
+    for i in range(amount//40):
+        print(f"Собираем с {i} страницы:")
+        params = {'page': i, 'keywords': vacancy_name}
+        response = requests.get(url, params=params)
+        soup = BeautifulSoup(response.text, 'lxml')
+        vacancies = soup.find_all('div', class_='_2lp1U _2J-3z _3B5DQ')
+        for vacancy in vacancies:
+            count += 1
+            print(f"Собрали {count} вакансию ")
+            vacancy_name = vacancy.find('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc').text
+            vacancy_url = "https://russia.superjob.ru" + vacancy.find('a', href=True)['href']
+            vacancy_salary = vacancy.find('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi').text
+            vacancy_description = vacancy.find('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky').text
+            vacancy_sj = str(Vacancy(vacancy_name, vacancy_url, vacancy_description, vacancy_salary))
+            with open("vacancies.txt", 'a', encoding="utf-8") as f:
+                f.write(vacancy_sj)
 
-
-getting_vacancies_hh("python", 100)
+#
+# getting_vacancies_hh("python", 100)
+getting_vacancies_sj("python", 40)
