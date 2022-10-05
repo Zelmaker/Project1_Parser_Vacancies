@@ -62,17 +62,20 @@ class Superjob(Engine):
             response = requests.get(url, params=params)
             soup = BeautifulSoup(response.text, 'lxml')
             vacancies = soup.find_all('div', class_='_2lp1U _2J-3z _3B5DQ')
-            for vacancy in vacancies:
-                count += 1
-                print(f"Собрали c SJ {count} вакансию ")
-                self.vacancy_name = vacancy.find('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc').text
-                vacancy_url = "https://russia.superjob.ru" + vacancy.find('a', href=True)['href']
-                vacancy_salary = vacancy.find('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi').text
+            if len(vacancies) == 0:
+                break
+            else:
+                for vacancy in vacancies:
+                    count += 1
+                    print(f"Собрали c SJ {count} вакансию ")
+                    self.vacancy_name = vacancy.find('span', class_='_9fIP1 _249GZ _1jb_5 QLdOc').text
+                    vacancy_url = "https://russia.superjob.ru" + vacancy.find('a', href=True)['href']
+                    vacancy_salary = vacancy.find('span', class_='_2eYAG _1nqY_ _249GZ _1jb_5 _1dIgi').text
 
-                vacancy_description = vacancy.find('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky').text
-                vacancy_sj = str(Vacancy(self.vacancy_name, vacancy_url, vacancy_description, vacancy_salary))
-                with open("vacancies.txt", 'a', encoding="utf-8") as f:
-                    f.write(vacancy_sj)
+                    vacancy_description = vacancy.find('span', class_='_1Nj4W _249GZ _1jb_5 _1dIgi _3qTky').text
+                    vacancy_sj = str(Vacancy(self.vacancy_name, vacancy_url, vacancy_description, vacancy_salary))
+                    with open("vacancies.txt", 'a', encoding="utf-8") as f:
+                        f.write(vacancy_sj)
         return count
 
 
