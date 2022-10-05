@@ -95,54 +95,35 @@ def vacancies_file_output():
     return file
 
 
-# def convert_salary(vacancies_file):
-#     """
-#
-#     :param vacancies_file: список, всех вакансий, в котором имеются поля описания вакансии
-#     которые имеют разделитель|,3 элемент = зарплата не очищенная от не int элементов
-#     :return:
-#     """
-#     salary_checked = {}
-#     found_salary = []
-#     for v in vacancies_file:
-#         i = v.split("|")
-#         found_salary = re.findall(r'\d{2,3}\s?\d{3}', i[3])
-#         if len(found_salary) == 1:
-#             i[3] = found_salary[0].replace(" ","")
-#             salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
-#         elif len(found_salary) == 2:
-#             i[3] = found_salary[0].replace(" ", "")
-#             salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
-#         else:
-#             continue
-#     return Counter(salary_checked).most_common(10)
+def convert_salary(vacancies_file):
+    """
+
+    :param vacancies_file: список, всех вакансий, в котором имеются поля описания вакансии
+    которые имеют разделитель|,3 элемент = зарплата не очищенная от не int элементов
+    :return:
+    """
+    salary_checked = {}
+    found_salary = []
+    for v in vacancies_file:
+        i = v.split("|")
+        found_salary = re.findall(r'\d{2,3}\s?\d{3}', i[3])
+        print(found_salary)
+        print(len(found_salary))
+        if len(found_salary) == 1:
+            i[3] = str(found_salary[0]).replace("\xa0","")
+            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+        elif len(found_salary) == 2:
+            i[3] = str(found_salary[0]).replace("\xa0", "")
+            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+        else:
+            continue
+    return Counter(salary_checked).most_common(10)
 
 
 def main():
-    print("Привет!\nЭто парсер вакансий с сайтов HH и SJ!\nВыбери, что будем делать?\n1.Собираем с HH\n2.Собираем с SJ")
-    user_input = input()
-    if user_input == "1":
-        print("Собираем HH")
-        print("Введи ключ(например: python)")
-        user_keyword_input = input()
-        print("Сколько вакансий собираем с hh? ")
-        vacancies_from_hh = int(input())
-        hh = HH(user_keyword_input, vacancies_from_hh)
-        number_of_hh_vacs = hh.get_request()
-        print(f"Собрано {number_of_hh_vacs} вакансий")
-    elif user_input == "2":
-        print("Собираем SJ введите ключ(например: python)")
-        user_keyword_input = input()
-        print("Сколько вакансий собираем с SJ?")
-        vacancies_from_sj = int(input())
-        sj = Superjob(user_keyword_input, vacancies_from_sj)
-        number_of_sj_vacs = sj.get_request()
-        print(f"Собрано {number_of_sj_vacs} вакансий")
-    else:
-        print("Ошибочка попробуй ещё")
-    Доп. блок, что делаем с собранными данными
+    print("Привет!\nЭто парсер вакансий с сайтов HH и SJ!")
     while True:
-        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3.Собираем с HH\n4.Собираем с SJ\n5.Очистить файл")
+        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3.Собираем с HH\n4.Собираем с SJ\n5.Очистить файл\n6. Топ 10 по зп")
         user_input = input()
         if user_input == "1":
             all_vacancies = vacancies_file_output()
@@ -177,10 +158,10 @@ def main():
             print(f"Собрано {number_of_sj_vacs} вакансий")
         elif user_input == "5":
             open('vacancies.txt', 'w').close()
-        # elif user_input == "6":
-        #     top_10_salary = convert_salary(vacancies_file_output())
-        #     for i in top_10_salary:
-        #         print(i)
+        elif user_input == "6":
+            top_10_salary = convert_salary(vacancies_file_output())
+            for i in top_10_salary:
+                print(i)
         else:
             print("Ошибочка попробуй ещё")
 
