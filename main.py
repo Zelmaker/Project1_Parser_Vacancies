@@ -1,5 +1,6 @@
 from abc import abstractmethod, ABC
-
+from collections import Counter
+import re
 from bs4 import BeautifulSoup
 import json
 import requests
@@ -94,6 +95,29 @@ def vacancies_file_output():
     return file
 
 
+# def convert_salary(vacancies_file):
+#     """
+#
+#     :param vacancies_file: список, всех вакансий, в котором имеются поля описания вакансии
+#     которые имеют разделитель|,3 элемент = зарплата не очищенная от не int элементов
+#     :return:
+#     """
+#     salary_checked = {}
+#     found_salary = []
+#     for v in vacancies_file:
+#         i = v.split("|")
+#         found_salary = re.findall(r'\d{2,3}\s?\d{3}', i[3])
+#         if len(found_salary) == 1:
+#             i[3] = found_salary[0].replace(" ","")
+#             salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+#         elif len(found_salary) == 2:
+#             i[3] = found_salary[0].replace(" ", "")
+#             salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+#         else:
+#             continue
+#     return Counter(salary_checked).most_common(10)
+
+
 def main():
     print("Привет!\nЭто парсер вакансий с сайтов HH и SJ!\nВыбери, что будем делать?\n1.Собираем с HH\n2.Собираем с SJ")
     user_input = input()
@@ -116,20 +140,23 @@ def main():
         print(f"Собрано {number_of_sj_vacs} вакансий")
     else:
         print("Ошибочка попробуй ещё")
-    # Доп. блок, что делаем с собранными данными
+    Доп. блок, что делаем с собранными данными
     while True:
-        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3. Собираем с HH\n4.Собираем с SJ\n5.Очистить файл")
+        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3.Собираем с HH\n4.Собираем с SJ\n5.Очистить файл")
         user_input = input()
         if user_input == "1":
             all_vacancies = vacancies_file_output()
             print(all_vacancies)
         elif user_input == "2":
             all_vacancies = vacancies_file_output()
-            print(type(all_vacancies),all_vacancies)
             shuffle(all_vacancies)
-            for i in range(10):
-                for vacancy in all_vacancies:
+            n = 0
+            for vacancy in all_vacancies:
+                if n < 10:
+                    n +=1
                     print(vacancy)
+                else:
+                    break
         elif user_input == "3":
             print("Собираем HH")
             print("Введи ключ(например: python)")
@@ -150,8 +177,13 @@ def main():
             print(f"Собрано {number_of_sj_vacs} вакансий")
         elif user_input == "5":
             open('vacancies.txt', 'w').close()
+        # elif user_input == "6":
+        #     top_10_salary = convert_salary(vacancies_file_output())
+        #     for i in top_10_salary:
+        #         print(i)
         else:
             print("Ошибочка попробуй ещё")
+
 
 
 if __name__ == '__main__':
