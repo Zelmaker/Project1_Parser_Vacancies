@@ -87,8 +87,10 @@ class Vacancy:
 
 
 def vacancies_file_output():
+    file = []
     with open("vacancies.txt", 'r', encoding="utf-8") as f:
-        file = f.readline()
+        for i in f:
+            file.append(f.readline())
     return file
 
 
@@ -116,15 +118,14 @@ def main():
         print("Ошибочка попробуй ещё")
     # Доп. блок, что делаем с собранными данными
     while True:
-        print(
-            "Выбери, что будем делать?\n1. Вывести все вакансии\n2. Вывести рандом 10 по зп\n3. Собираем с HH\n4.Собираем с SJ\n5.Очистить файл")
+        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3. Собираем с HH\n4.Собираем с SJ\n5.Очистить файл")
         user_input = input()
         if user_input == "1":
             all_vacancies = vacancies_file_output()
-            for vacancy in all_vacancies:
-                print(vacancy)
+            print(all_vacancies)
         elif user_input == "2":
             all_vacancies = vacancies_file_output()
+            print(type(all_vacancies),all_vacancies)
             shuffle(all_vacancies)
             for i in range(10):
                 for vacancy in all_vacancies:
