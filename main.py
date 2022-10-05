@@ -1,5 +1,5 @@
+import heapq
 from abc import abstractmethod, ABC
-from collections import Counter
 import re
 from bs4 import BeautifulSoup
 import json
@@ -91,7 +91,7 @@ def vacancies_file_output():
     file = []
     with open("vacancies.txt", 'r', encoding="utf-8") as f:
         for i in f:
-            file.append(f.readline())
+            file.append(i)
     return file
 
 
@@ -103,38 +103,38 @@ def convert_salary(vacancies_file):
     :return:
     """
     salary_checked = {}
-    found_salary = []
     for v in vacancies_file:
         i = v.split("|")
         found_salary = re.findall(r'\d{2,3}\s?\d{3}', i[3])
-        print(found_salary)
-        print(len(found_salary))
         if len(found_salary) == 1:
-            i[3] = str(found_salary[0]).replace("\xa0","")
-            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+            i[3] = str(found_salary[0]).replace("\xa0", "")
+            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = int(i[3])
         elif len(found_salary) == 2:
             i[3] = str(found_salary[0]).replace("\xa0", "")
-            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = i[3]
+            salary_checked[i[0] + "|" + i[1] + "|" + i[2] + "|Зарплата: " + i[3]] = int(i[3])
         else:
             continue
-    return Counter(salary_checked).most_common(10)
+
+    return dict(heapq.nlargest(10, salary_checked.items(), key=lambda x: x[1]))
 
 
 def main():
     print("Привет!\nЭто парсер вакансий с сайтов HH и SJ!")
     while True:
-        print("Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3.Собираем с HH\n4.Собираем с SJ\n5.Очистить файл\n6. Топ 10 по зп")
+        print(
+            "Выбери, что будем делать?\n1.Вывести все вакансии\n2.Вывести рандом 10\n3.Собираем с HH\n4.Собираем с SJ\n5.Очистить файл\n6. Топ 10 по зп")
         user_input = input()
         if user_input == "1":
             all_vacancies = vacancies_file_output()
-            print(all_vacancies)
+            for i in all_vacancies:
+                print(i)
         elif user_input == "2":
             all_vacancies = vacancies_file_output()
             shuffle(all_vacancies)
             n = 0
             for vacancy in all_vacancies:
                 if n < 10:
-                    n +=1
+                    n += 1
                     print(vacancy)
                 else:
                     break
@@ -164,7 +164,6 @@ def main():
                 print(i)
         else:
             print("Ошибочка попробуй ещё")
-
 
 
 if __name__ == '__main__':
