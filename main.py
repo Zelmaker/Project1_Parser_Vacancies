@@ -28,7 +28,7 @@ class HH(Engine):
             page = requests.get("https://api.hh.ru/vacancies", params=par)
             data = json.loads(page.text)
             if len(data) == 0:
-                print("break")
+                print("нет данных больше на hh")
                 break
             for i in data["items"]:
                 counter += 1
@@ -63,6 +63,7 @@ class Superjob(Engine):
             soup = BeautifulSoup(response.text, 'lxml')
             vacancies = soup.find_all('div', class_='_2lp1U _2J-3z _3B5DQ')
             if len(vacancies) == 0:
+                print("Вакансий на SJ больше нет")
                 break
             else:
                 for vacancy in vacancies:
